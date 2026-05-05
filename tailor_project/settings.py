@@ -52,8 +52,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tailor_website',
-        'USER': 'jilla',
-        'PASSWORD': 'Uj@10212024', 
+        'USER': 'root',
+        'PASSWORD': '', 
         'HOST': 'localhost',
         'PORT': '3306',
     }
