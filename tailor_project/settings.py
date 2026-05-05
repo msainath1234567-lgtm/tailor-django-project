@@ -50,15 +50,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tailor_project.wsgi.application'
+import os
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tailor_website',
-        'USER': 'root',
-        'PASSWORD': '', 
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.environ.get('MYSQLDATABASE', 'railway'),
+        'USER': os.environ.get('MYSQLUSER', 'root'),
+        'PASSWORD': os.environ.get('MYSQLPASSWORD', ''),
+        'HOST': os.environ.get('MYSQLHOST', 'localhost'),  # ← This was the bug!
+        'PORT': os.environ.get('MYSQLPORT', '3306'),
     }
 }
 
