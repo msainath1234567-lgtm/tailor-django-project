@@ -1,0 +1,98 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}Orders | Smart Tailors{% endblock %}
+{% block nav_orders %}active{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Order Management</h1>
+        <p class="page-subtitle">Manage customer orders, status and payments.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-head">
+        <div>
+            <div class="card-title">Order List</div>
+            <div class="card-subtitle">All customer tailoring orders</div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Order No</th>
+                    <th>Customer</th>
+                    <th>Delivery</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Total</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td><strong>{{ o.order_no }}</strong></td>
+                    <td>{{ o.customer.full_name }}</td>
+                    <td>{{ o.delivery_date|default:"-" }}</td>
+
+                    <td>
+                        {% if o.order_status == 'Pending' %}
+                            <span class="badge badge-pending">Pending</span>
+                        {% elif o.order_status == 'Stitching' %}
+                            <span class="badge badge-progress">Stitching</span>
+                        {% elif o.order_status == 'Ready' %}
+                            <span class="badge badge-done">Ready</span>
+                        {% elif o.order_status == 'Delivered' %}
+                            <span class="badge badge-done">Delivered</span>
+                        {% elif o.order_status == 'Cancelled' %}
+                            <span class="badge badge-cancel">Cancelled</span>
+                        {% else %}
+                            <span class="badge badge-pending">{{ o.order_status }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if o.payment_status == 'Paid' %}
+                            <span class="badge badge-done">Paid</span>
+                        {% elif o.payment_status == 'Partially Paid' %}
+                            <span class="badge badge-progress">Partially Paid</span>
+                        {% else %}
+                            <span class="badge badge-pending">Unpaid</span>
+                        {% endif %}
+                    </td>
+
+                    <td><strong>₹{{ o.total_amount }}</strong></td>
+
+                    <td class="text-end">
+                        <a href="{% url 'order_edit' o.id %}" class="btn-secondary btn-sm">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </a>
+
+                        <form method="post" action="{% url 'order_delete' o.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete btn-sm" onclick="return confirm('Delete this order?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        No orders found
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

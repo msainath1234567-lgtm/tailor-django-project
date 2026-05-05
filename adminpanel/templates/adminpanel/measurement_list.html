@@ -1,0 +1,106 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}Measurements | Smart Tailors{% endblock %}
+{% block nav_measurements %}active{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Measurement Management</h1>
+        <p class="page-subtitle">Manage men and ladies customer measurements.</p>
+    </div>
+
+   
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-head">
+                <div>
+                    <div class="card-title">Men Measurements</div>
+                    <div class="card-subtitle">Chest and waist details</div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Chest</th>
+                            <th>Waist</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in men %}
+                        <tr>
+                            <td><strong>{{ m.customer.full_name }}</strong></td>
+                            <td>{{ m.chest }}</td>
+                            <td>{{ m.waist }}</td>
+                            <td class="text-end">
+                                <a href="{% url 'men_measurement_edit' m.id %}" class="btn-secondary btn-sm">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No men measurements found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-head">
+                <div>
+                    <div class="card-title">Ladies Measurements</div>
+                    <div class="card-subtitle">Bust and waist details</div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Bust</th>
+                            <th>Waist</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for l in ladies %}
+                        <tr>
+                            <td><strong>{{ l.customer.full_name }}</strong></td>
+                            <td>{{ l.bust }}</td>
+                            <td>{{ l.waist }}</td>
+                            <td class="text-end">
+                                <a href="{% url 'ladies_measurement_edit' l.id %}" class="btn-secondary btn-sm">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No ladies measurements found
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

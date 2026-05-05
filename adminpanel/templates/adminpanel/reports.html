@@ -1,0 +1,105 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}Reports | Smart Tailors{% endblock %}
+{% block nav_reports %}active{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Reports</h1>
+        <p class="page-subtitle">Business insights and performance summary</p>
+    </div>
+</div>
+
+<!-- STATS -->
+<div class="row g-3">
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card">
+            <div class="stat-icon blue"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+            <div>
+                <p class="stat-label">Total Sales</p>
+                <h2 class="stat-value">₹{{ sales_total }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card">
+            <div class="stat-icon green"><i class="fa-solid fa-credit-card"></i></div>
+            <div>
+                <p class="stat-label">Payments</p>
+                <h2 class="stat-value">₹{{ payments_total }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card">
+            <div class="stat-icon orange"><i class="fa-solid fa-users"></i></div>
+            <div>
+                <p class="stat-label">Customers</p>
+                <h2 class="stat-value">{{ customer_total }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card">
+            <div class="stat-icon purple"><i class="fa-solid fa-scissors"></i></div>
+            <div>
+                <p class="stat-label">Services</p>
+                <h2 class="stat-value">{{ service_total }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ORDERS STATUS -->
+<div class="card mt-4">
+    <div class="card-head">
+        <div>
+            <div class="card-title">Orders By Status</div>
+            <div class="card-subtitle">Distribution of orders based on status</div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for s in orders_by_status %}
+                <tr>
+                    <td>
+                        {% if s.order_status == 'Completed' %}
+                            <span class="badge badge-done">Completed</span>
+                        {% elif s.order_status == 'Cancelled' %}
+                            <span class="badge badge-cancel">Cancelled</span>
+                        {% elif s.order_status == 'In Progress' %}
+                            <span class="badge badge-progress">In Progress</span>
+                        {% else %}
+                            <span class="badge badge-pending">{{ s.order_status }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td><strong>{{ s.total }}</strong></td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center text-muted py-4">
+                        No report data available
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

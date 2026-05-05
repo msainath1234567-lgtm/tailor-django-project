@@ -1,0 +1,198 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}Dashboard | Smart Tailors Admin{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Business overview and analytics</p>
+    </div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="dashboard-grid">
+
+    <div class="card stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-users"></i></div>
+        <div>
+            <p class="stat-label">Customers</p>
+            <h2 class="stat-value">{{ customer_count }}</h2>
+        </div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="stat-icon orange"><i class="fa-solid fa-receipt"></i></div>
+        <div>
+            <p class="stat-label">Orders</p>
+            <h2 class="stat-value">{{ order_count }}</h2>
+        </div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-scissors"></i></div>
+        <div>
+            <p class="stat-label">Services</p>
+            <h2 class="stat-value">{{ service_count }}</h2>
+        </div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="stat-icon purple"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+        <div>
+            <p class="stat-label">Total Sales</p>
+            <h2 class="stat-value">₹{{ total_sales }}</h2>
+        </div>
+    </div>
+
+</div>
+
+<!-- CHARTS -->
+<div class="row g-4 mt-3">
+
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Order Status</div>
+            </div>
+
+            <div style="height:300px;padding:20px;">
+                <canvas id="orderStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Payments</div>
+            </div>
+
+            <div style="height:300px;padding:20px;">
+                <canvas id="paymentChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- RECENT ORDERS -->
+<div class="row g-4 mt-3">
+
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Recent Orders</div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Customer</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for o in recent_orders %}
+                        <tr>
+                            <td><strong>{{ o.order_no }}</strong></td>
+                            <td>{{ o.customer.full_name }}</td>
+
+                            <td>
+                                {% if o.order_status == 'Pending' %}
+                                    <span class="badge badge-pending">Pending</span>
+                                {% elif o.order_status == 'Stitching' %}
+                                    <span class="badge badge-progress">Stitching</span>
+                                {% elif o.order_status == 'Ready' %}
+                                    <span class="badge badge-done">Ready</span>
+                                {% elif o.order_status == 'Delivered' %}
+                                    <span class="badge badge-done">Delivered</span>
+                                {% elif o.order_status == 'Cancelled' %}
+                                    <span class="badge badge-cancel">Cancelled</span>
+                                {% endif %}
+                            </td>
+
+                            <td><strong>₹{{ o.total_amount }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ORDER CHART
+    const orderStatusCtx = document.getElementById("orderStatusChart");
+
+    if (orderStatusCtx) {
+        new Chart(orderStatusCtx, {
+            type: "bar",
+            data: {
+                labels: ["Pending", "Stitching", "Ready", "Delivered", "Cancelled"],
+                datasets: [{
+                    data: [
+                        Number("{{ pending_orders|default:0 }}"),
+                        Number("{{ stitching_orders|default:0 }}"),
+                        Number("{{ ready_orders|default:0 }}"),
+                        Number("{{ delivered_orders|default:0 }}"),
+                        Number("{{ cancelled_orders|default:0 }}")
+                    ],
+                    backgroundColor: [
+                        "#f59e0b",
+                        "#2563eb",
+                        "#16a34a",
+                        "#0f172a",
+                        "#dc2626"
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+
+    // PAYMENT CHART
+    const paymentCtx = document.getElementById("paymentChart");
+
+    if (paymentCtx) {
+        new Chart(paymentCtx, {
+            type: "doughnut",
+            data: {
+                labels: ["Paid", "Partial", "Unpaid"],
+                datasets: [{
+                    data: [
+                        Number("{{ paid_orders|default:0 }}"),
+                        Number("{{ partial_orders|default:0 }}"),
+                        Number("{{ unpaid_orders|default:0 }}")
+                    ],
+                    backgroundColor: ["#16a34a","#2563eb","#f59e0b"]
+                }]
+            }
+        });
+    }
+
+});
+</script>
+
+{% endblock %}

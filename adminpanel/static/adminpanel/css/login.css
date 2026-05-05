@@ -1,0 +1,81 @@
+
+
+/* ===== login.html ===== */
+body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: #fff;
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 25px 70px rgba(0,0,0,.35);
+            animation: fadeIn .5s ease;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(135deg,#1a56db,#3b82f6);
+            color: #fff;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            border-color: #1a56db;
+            box-shadow: 0 0 0 3px rgba(26,86,219,.15);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg,#1a56db,#2563eb);
+            border: none;
+            padding: 10px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: .2s;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg,#1747b0,#1d4ed8);
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #64748b;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        @keyframes fadeIn {
+            from {opacity:0; transform: translateY(10px);}
+            to {opacity:1; transform: translateY(0);}
+        }

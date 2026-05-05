@@ -1,0 +1,129 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-label">Smart Tailors</div>
+  <h1>Get in <em>Touch</em></h1>
+  <p>We'd love to hear from you — reach out for enquiries, bookings, or feedback.</p>
+</div>
+
+<!-- CONTACT LAYOUT -->
+<div class="contact-wrap reveal">
+
+  <!-- LEFT: INFO -->
+  <div class="contact-info">
+    <div class="info-label">Contact</div>
+    <div class="info-heading">Let's talk<br>about your <em>fit.</em></div>
+    <div class="info-desc">
+      Whether you have a question about our services, want to book a fitting, or simply want to say hello — we're here for you.
+    </div>
+
+    <div class="info-divider"></div>
+
+    <div class="info-items">
+      <div class="info-item">
+        <div class="info-icon">✉</div>
+        <div class="info-item-content">
+          <div class="info-item-label">Email</div>
+          <div class="info-item-val">hello@smarttailors.in</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">☎</div>
+        <div class="info-item-content">
+          <div class="info-item-label">Phone</div>
+          <div class="info-item-val">+91 98765 43210</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">⊙</div>
+        <div class="info-item-content">
+          <div class="info-item-label">Location</div>
+          <div class="info-item-val">123, Tailor Street,<br>Chennai, Tamil Nadu</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-bottom">
+      <div class="info-bottom-label">Working Hours</div>
+      <div class="info-hours">
+        <div class="info-hour-row">
+          <span>Monday – Friday</span>
+          <span>9:00 AM – 7:00 PM</span>
+        </div>
+        <div class="info-hour-row">
+          <span>Saturday</span>
+          <span>10:00 AM – 5:00 PM</span>
+        </div>
+        <div class="info-hour-row">
+          <span>Sunday</span>
+          <span>Closed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: FORM -->
+  <div class="contact-form-panel">
+    <div class="form-heading">Send an Enquiry</div>
+    <div class="form-sub">Fill in the details below and we'll get back to you within 24 hours.</div>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-row">
+        <div class="field">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required>
+        </div>
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone" placeholder="+91 00000 00000">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject" placeholder="How can we help?">
+        </div>
+      </div>
+
+      <div class="field-full">
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Tell us about your requirements…" required></textarea>
+        </div>
+      </div>
+
+      <div class="form-submit">
+        <div class="submit-note">
+          We typically respond within one business day.
+        </div>
+        <button type="submit" class="btn-send">
+          Send Enquiry
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<script>
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: .08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+{% endblock %}

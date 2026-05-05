@@ -1,0 +1,61 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}{{ title }} | Smart Tailors{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ title }}</h1>
+        <p class="page-subtitle">Fill the details carefully and save changes.</p>
+    </div>
+
+    <button onclick="history.back()" class="btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
+</div>
+
+<div class="card">
+    <div class="card-head">
+        <div>
+            <div class="card-title">{{ title }}</div>
+            <div class="card-subtitle">Required information</div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row g-3">
+                {% for field in form %}
+                <div class="col-md-6">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+
+                    {% if field.help_text %}
+                    <div class="form-help">{{ field.help_text }}</div>
+                    {% endif %}
+
+                    {% if field.errors %}
+                    <div class="form-error">
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i> Save
+                </button>
+
+                <button type="button" onclick="history.back()" class="btn-secondary">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

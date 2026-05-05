@@ -1,0 +1,51 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero-label">Smart Tailors</div>
+  <h1>Create Your <em>Account</em></h1>
+  <p>Join us and experience bespoke tailoring like never before.</p>
+</div>
+
+<!-- REGISTER FORM -->
+<div class="register-wrap">
+  <div class="register-panel">
+
+    <div class="reg-section-label">New Customer</div>
+    <div class="reg-section-heading">Your details, <em>perfectly kept.</em></div>
+
+    <form method="post" class="reg-form">
+      {% csrf_token %}
+
+      <div class="reg-grid">
+        {{ form.as_p }}
+      </div>
+
+      <div class="reg-divider"></div>
+
+      <button type="submit" class="btn-register">
+        Create Account
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </form>
+
+    <div class="reg-switch">
+      Already have an account? <a href="{% url 'customer_login' %}">Sign in</a>
+    </div>
+
+    <div class="reg-trust">
+      <div class="trust-item"><span class="trust-dot"></span>Secure & Private</div>
+      <div class="trust-item"><span class="trust-dot"></span>Measurements Saved</div>
+      <div class="trust-item"><span class="trust-dot"></span>Order Tracking</div>
+      <div class="trust-item"><span class="trust-dot"></span>Premium Support</div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

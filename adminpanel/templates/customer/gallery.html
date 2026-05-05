@@ -1,0 +1,158 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-label">Smart Tailors</div>
+  <h1>Our <em>Gallery</em></h1>
+  <p>A showcase of craftsmanship — every stitch tells a story.</p>
+</div>
+
+<!-- CONTROLS -->
+<div class="gallery-controls reveal">
+  <div class="filter-row" id="filterRow">
+    <button class="filter-btn active" data-filter="all">All</button>
+    {% for g in gallery %}
+      {% if g.category %}
+        <button class="filter-btn" data-filter="{{ g.category }}">{{ g.category }}</button>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div class="gallery-count" id="galleryCount">
+    {{ gallery|length }} Piece{{ gallery|length|pluralize }}
+  </div>
+</div>
+
+<!-- MASONRY GALLERY -->
+<div class="gallery-wrap">
+  {% if gallery %}
+  <div class="gallery-masonry reveal" id="galleryGrid">
+    {% for g in gallery %}
+    <div class="g-item reveal" data-category="{{ g.category }}" data-index="{{ forloop.counter0 }}">
+      <img src="{{ g.image.url }}" alt="{{ g.title }}" loading="lazy">
+      <div class="g-overlay">
+        <div class="g-title">{{ g.title }}</div>
+        <div class="g-meta">
+          <span class="g-cat">{{ g.category }}</span>
+          <div class="g-view">+</div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="gallery-empty reveal">
+    <div class="empty-icon">✂</div>
+    <h4>Gallery coming soon</h4>
+    <p>Beautiful work will appear here once photos are uploaded.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" id="lbClose">✕</button>
+    <button class="lightbox-nav lightbox-prev" id="lbPrev">‹</button>
+    <button class="lightbox-nav lightbox-next" id="lbNext">›</button>
+    <img class="lightbox-img" id="lbImg" src="" alt="">
+    <div class="lightbox-info">
+      <div class="lightbox-title" id="lbTitle"></div>
+      <div class="lightbox-cat" id="lbCat"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Scroll reveal ── */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: .06 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ── Deduplicate filter buttons ── */
+const filterRow = document.getElementById('filterRow');
+const seen = new Set(['all']);
+filterRow.querySelectorAll('.filter-btn').forEach(btn => {
+  const f = btn.dataset.filter;
+  if (seen.has(f)) { btn.remove(); return; }
+  seen.add(f);
+});
+
+/* ── Filter logic ── */
+const filterBtns = document.querySelectorAll('.filter-btn');
+const items      = document.querySelectorAll('.g-item');
+const countEl    = document.getElementById('galleryCount');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    let visible = 0;
+    items.forEach(item => {
+      const show = f === 'all' || item.dataset.category === f;
+      item.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    countEl.textContent = visible + ' Piece' + (visible !== 1 ? 's' : '');
+  });
+});
+
+/* ── Lightbox ── */
+const lb      = document.getElementById('lightbox');
+const lbImg   = document.getElementById('lbImg');
+const lbTitle = document.getElementById('lbTitle');
+const lbCat   = document.getElementById('lbCat');
+let current   = 0;
+
+function getVisible() {
+  return [...items].filter(i => i.style.display !== 'none');
+}
+
+function openLb(index) {
+  const visible = getVisible();
+  current = index;
+  const item  = visible[current];
+  lbImg.src   = item.querySelector('img').src;
+  lbTitle.textContent = item.querySelector('.g-title').textContent;
+  lbCat.textContent   = item.querySelector('.g-cat').textContent;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLb() {
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function navigate(dir) {
+  const visible = getVisible();
+  current = (current + dir + visible.length) % visible.length;
+  openLb(current);
+}
+
+items.forEach((item, i) => {
+  item.addEventListener('click', () => {
+    const visible = getVisible();
+    const visIdx  = visible.indexOf(item);
+    openLb(visIdx);
+  });
+});
+
+document.getElementById('lbClose').addEventListener('click', closeLb);
+document.getElementById('lbPrev').addEventListener('click', () => navigate(-1));
+document.getElementById('lbNext').addEventListener('click', () => navigate(1));
+lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+
+document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape')      closeLb();
+  if (e.key === 'ArrowLeft')   navigate(-1);
+  if (e.key === 'ArrowRight')  navigate(1);
+});
+</script>
+
+{% endblock %}

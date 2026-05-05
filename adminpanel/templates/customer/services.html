@@ -1,0 +1,462 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+<div class="page-hero">
+  <div class="page-hero-label">Smart Tailors</div>
+  <h1>Our <em>Services</em></h1>
+  <p>Bespoke craftsmanship for every garment, every occasion.</p>
+</div>
+
+<div class="search-wrap">
+  <form method="get" action="">
+    <div class="search-box">
+      <input type="text" name="q" value="{{ q }}" placeholder="Search services…" autocomplete="off">
+      <button type="submit">Search</button>
+    </div>
+  </form>
+</div>
+
+<div class="filter-row reveal">
+  <button type="button" class="filter-btn active" data-filter="all">All</button>
+  <button type="button" class="filter-btn" data-filter="Men">Men</button>
+  <button type="button" class="filter-btn" data-filter="Ladies">Women</button>
+  <button type="button" class="filter-btn" data-filter="Common">Common</button>
+</div>
+
+<div class="services-wrap">
+  {% if q %}
+  <div class="result-meta reveal">
+    {{ services|length }} result{{ services|length|pluralize }} for "{{ q }}"
+  </div>
+  {% endif %}
+
+  <div class="svc-grid reveal">
+    {% for s in services %}
+    <div class="svc-card" data-gender="{{ s.gender_type }}">
+
+      <div class="svc-top">
+        <div class="svc-index">
+          {% if forloop.counter < 10 %}0{{ forloop.counter }}{% else %}{{ forloop.counter }}{% endif %}
+        </div>
+        <span class="svc-gender">{{ s.gender_type }}</span>
+      </div>
+
+      <div class="svc-body">
+        <div class="svc-name">{{ s.service_name }}</div>
+        <div class="svc-desc">
+          {{ s.service_description|default:"Premium tailoring service with professional fitting and finishing." }}
+        </div>
+      </div>
+
+      <div class="svc-foot">
+        <div class="svc-price-block">
+          <div class="svc-price-label">Starting at</div>
+          {% with latest=s.prices.last %}
+            {% if latest %}
+            <div class="svc-price">₹{{ latest.price }}</div>
+            {% else %}
+            <div class="svc-price">₹0</div>
+            {% endif %}
+          {% endwith %}
+        </div>
+
+        <a href="{% url 'customer_service_detail' s.id %}" class="detail-btn">
+          View Details <span>→</span>
+        </a>
+      </div>
+
+    </div>
+
+    {% empty %}
+    <div class="empty-state">
+      <div class="empty-icon">✂</div>
+      <h4>No services found</h4>
+      <p>{% if q %}Try a different search term.{% else %}Services will appear here once added.{% endif %}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+/* ─── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── Hero ──────────────────────────────────────────────────── */
+.page-hero {
+  background: #111;
+  color: #fff;
+  text-align: center;
+  padding: 72px 20px 60px;
+}
+
+.page-hero-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #aaa;
+  margin-bottom: 16px;
+}
+
+.page-hero h1 {
+  font-size: clamp(36px, 5vw, 60px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.page-hero h1 em {
+  font-style: italic;
+  font-weight: 300;
+  color: #ccc;
+}
+
+.page-hero p {
+  font-size: 15px;
+  color: #999;
+  max-width: 420px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ─── Search ────────────────────────────────────────────────── */
+.search-wrap {
+  background: #111;
+  padding: 0 20px 28px;
+}
+
+.search-box {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  border: 1px solid #333;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 14px 18px;
+  background: #1a1a1a;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+}
+
+.search-box input::placeholder {
+  color: #666;
+}
+
+.search-box button {
+  padding: 14px 28px;
+  background: #fff;
+  color: #111;
+  border: none;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.search-box button:hover {
+  background: #ddd6ce;
+}
+
+/* ─── Filter Row ────────────────────────────────────────────── */
+.filter-row {
+  display: flex;
+  gap: 0;
+  padding: 24px 40px;
+  background: #f5f2ed;
+  border-bottom: 1px solid #e8e3db;
+}
+
+.filter-btn {
+  padding: 10px 26px;
+  border: 1px solid #ddd6ce;
+  border-right: none;
+  background: transparent;
+  color: #555;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.filter-btn:last-child {
+  border-right: 1px solid #ddd6ce;
+}
+
+.filter-btn:hover {
+  background: #ede8e0;
+  color: #111;
+}
+
+.filter-btn.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+/* ─── Services Wrap ─────────────────────────────────────────── */
+.services-wrap {
+  background: #f5f2ed;
+  padding: 32px 40px 60px;
+  min-height: 400px;
+}
+
+.result-meta {
+  font-size: 12px;
+  color: #888;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+/* ─── Grid ──────────────────────────────────────────────────── */
+.svc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: #ddd6ce;
+  border: 1px solid #ddd6ce;
+}
+
+/* ─── Card ──────────────────────────────────────────────────── */
+.svc-card {
+  background: #faf8f5;
+  padding: 28px 26px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: background 0.2s;
+}
+
+.svc-card:hover {
+  background: #fff;
+}
+
+/* ─── Card Top ──────────────────────────────────────────────── */
+.svc-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.svc-index {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #bbb;
+}
+
+.svc-gender {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 1px solid #ddd6ce;
+  padding: 4px 10px;
+  color: #777;
+  background: transparent;
+}
+
+/* ─── Card Body ─────────────────────────────────────────────── */
+.svc-body {
+  flex: 1;
+  margin-bottom: 24px;
+}
+
+.svc-name {
+  font-size: 22px;
+  font-weight: 900;
+  color: #111;
+  margin-bottom: 10px;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+
+.svc-desc {
+  font-size: 13px;
+  color: #888;
+  line-height: 1.65;
+}
+
+/* ─── Card Footer ───────────────────────────────────────────── */
+.svc-foot {
+  border-top: 1px solid #eee7df;
+  padding-top: 18px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.svc-price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.svc-price-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+.svc-price {
+  font-size: 22px;
+  font-weight: 900;
+  color: #111;
+  line-height: 1;
+}
+
+/* ─── Detail Button ─────────────────────────────────────────── */
+.detail-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #111;
+  background: transparent;
+  color: #111;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 11px 16px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.detail-btn:hover {
+  background: #111;
+  color: #fff;
+}
+
+.detail-btn span {
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.detail-btn:hover span {
+  transform: translateX(4px);
+}
+
+/* ─── Empty State ───────────────────────────────────────────── */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  background: #faf8f5;
+}
+
+.empty-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+  color: #bbb;
+}
+
+.empty-state h4 {
+  font-size: 18px;
+  font-weight: 900;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: #888;
+}
+
+/* ─── Reveal Animation ──────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Responsive ────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .svc-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .services-wrap,
+  .filter-row {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .svc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .filter-btn {
+    border-right: 1px solid #ddd6ce;
+  }
+
+  .svc-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .detail-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+
+<script>
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  });
+}, { threshold: .08 });
+
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+const filterBtns = document.querySelectorAll('.filter-btn');
+const cards = document.querySelectorAll('.svc-card');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const f = btn.dataset.filter;
+
+    cards.forEach(card => {
+      const show = f === 'all' || card.dataset.gender === f;
+      card.style.display = show ? '' : 'none';
+    });
+  });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,301 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<div class="hero">
+  <div class="hero-lines"></div>
+  <div class="hero-accent"></div>
+  <div class="hero-inner">
+    <div class="hero-tag">Premium Tailoring Service</div>
+    <h1>{{ service.service_name }}</h1>
+    <p>{{ service.service_description|default:"Professional tailoring crafted to your exact measurements — superior fabric handling with a finish that speaks for itself." }}</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span>500+</span><small>Orders Done</small></div>
+      <div class="hero-stat"><span>4.9★</span><small>Customer Rating</small></div>
+      <div class="hero-stat"><span>7 Days</span><small>Avg. Delivery</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="sd-body">
+  <div class="left-col">
+    <span class="badge">{{ service.gender_type }}</span>
+    <h2>{{ service.service_name }}</h2>
+    <p>{{ service.service_description|default:"Professional tailoring service with precise body measurements, superior fabric handling, and on-time delivery — every order guaranteed." }}</p>
+
+    <div class="features">
+      <div class="feat">
+        <span class="feat-num">01</span>
+        <strong>Perfect Fit</strong>
+        <small>Accurate body measurements taken by experts</small>
+      </div>
+      <div class="feat">
+        <span class="feat-num">02</span>
+        <strong>Clean Finish</strong>
+        <small>Professional stitching quality inside and out</small>
+      </div>
+      <div class="feat">
+        <span class="feat-num">03</span>
+        <strong>On-time Delivery</strong>
+        <small>Track your order in real time</small>
+      </div>
+    </div>
+
+    <div class="process">
+      <div class="process-label">How it works</div>
+      <div class="process-steps">
+        <div class="pstep"><div class="pstep-dot">1</div><small>Place Order</small></div>
+        <div class="pstep"><div class="pstep-dot">2</div><small>Measurements</small></div>
+        <div class="pstep"><div class="pstep-dot">3</div><small>Stitching</small></div>
+        <div class="pstep"><div class="pstep-dot">4</div><small>Delivery</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="price-panel">
+    <div class="price-tag">Starting Price</div>
+    <div class="price-amount"><sup>₹</sup>{{ price }}</div>
+    <p class="price-note">Final price varies based on fabric, design and customization chosen.</p>
+    <div class="price-divider"></div>
+
+    <div class="trust-item">
+      <div class="trust-check">✓</div>
+      Free measurement consultation
+    </div>
+    <div class="trust-item">
+      <div class="trust-check">✓</div>
+      Custom design options available
+    </div>
+    <div class="trust-item">
+      <div class="trust-check">✓</div>
+      7-day alteration guarantee
+    </div>
+
+    <a href="{% url 'place_order' service.id %}" class="cta-btn">Continue to Order</a>
+  </div>
+</div>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+body, .hero, .sd-body {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── HERO ── */
+.hero {
+  background: #0e0c0b;
+  padding: 65px 48px 55px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-lines {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 39px, rgba(199,161,122,.05) 40px),
+    repeating-linear-gradient(-45deg, transparent, transparent 39px, rgba(199,161,122,.03) 40px);
+}
+.hero-accent {
+  position: absolute; right: -60px; top: -60px;
+  width: 360px; height: 360px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(199,161,122,.12), transparent 70%);
+}
+.hero-inner {
+  position: relative; z-index: 1;
+  max-width: 1100px; margin: 0 auto;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+  color: #c7a17a; font-weight: 600; margin-bottom: 20px;
+}
+.hero-tag::before {
+  content: ''; display: block;
+  width: 28px; height: 1px; background: #c7a17a;
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(48px, 6.5vw, 82px);
+  font-weight: 700; color: #fff;
+  line-height: 1.02; margin-bottom: 20px;
+}
+.hero p {
+  font-size: 15px; color: #8a7f76;
+  line-height: 1.9; max-width: 540px; font-weight: 300;
+}
+.hero-stats {
+  display: flex; gap: 40px;
+  margin-top: 40px; padding-top: 36px;
+  border-top: 1px solid #1e1c1a;
+}
+.hero-stat span {
+  display: block; font-size: 22px;
+  font-weight: 600; color: #fff;
+}
+.hero-stat small {
+  font-size: 11px; color: #5a5350;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+
+/* ── BODY ── */
+.sd-body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 55px 30px;
+  background: #faf8f5;
+}
+
+/* ── LEFT ── */
+.left-col { padding-right: 52px; }
+
+.badge {
+  display: inline-block;
+  border: 1px solid #c7a17a;
+  color: #c7a17a;
+  padding: 5px 16px;
+  font-size: 10px; letter-spacing: 4px;
+  text-transform: uppercase; font-weight: 600;
+  margin-bottom: 22px;
+}
+.left-col h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px; font-weight: 700;
+  color: #1a1714; line-height: 1.15; margin-bottom: 16px;
+}
+.left-col > p {
+  font-size: 15px; color: #6b6560; line-height: 1.95;
+  border-left: 2px solid #eee3d8; padding-left: 18px;
+  margin-bottom: 40px;
+}
+
+/* features grid */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: #eee3d8;
+  border: 1px solid #eee3d8;
+}
+.feat {
+  background: #fff;
+  padding: 26px 20px;
+  position: relative;
+}
+.feat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px; font-weight: 700; color: #f0e8de;
+  position: absolute; top: 10px; right: 14px; line-height: 1;
+}
+.feat strong {
+  display: block; font-size: 13px;
+  font-weight: 600; color: #1a1714; margin-bottom: 6px;
+}
+.feat small { font-size: 12px; color: #999; line-height: 1.6; }
+
+/* process strip */
+.process { margin-top: 42px; }
+.process-label {
+  font-size: 10px; letter-spacing: 4px;
+  text-transform: uppercase; color: #bbb;
+  font-weight: 600; margin-bottom: 18px;
+}
+.process-steps {
+  display: flex; gap: 0;
+  position: relative;
+}
+.process-steps::before {
+  content: ''; position: absolute;
+  top: 14px; left: 14px; right: 14px; height: 1px;
+  background: #eee3d8; z-index: 0;
+}
+.pstep {
+  flex: 1; display: flex;
+  flex-direction: column; align-items: center;
+  gap: 8px; position: relative; z-index: 1;
+}
+.pstep-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #fff; border: 1px solid #eee3d8;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: #c7a17a;
+}
+.pstep small {
+  font-size: 11px; color: #999;
+  text-align: center; line-height: 1.4;
+}
+
+/* ── PRICE PANEL ── */
+.price-panel {
+  background: #111;
+  padding: 36px 28px;
+  display: flex; flex-direction: column;
+  align-self: start;
+  position: sticky; top: 20px;
+}
+.price-tag {
+  font-size: 10px; letter-spacing: 4px;
+  text-transform: uppercase; color: #c7a17a; font-weight: 600;
+}
+.price-amount {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 58px; font-weight: 700; color: #fff;
+  margin: 10px 0 4px; line-height: 1;
+}
+.price-amount sup {
+  font-size: 26px; vertical-align: top;
+  margin-top: 8px; display: inline-block;
+}
+.price-note {
+  font-size: 12px; color: #4a4540;
+  line-height: 1.7; margin-bottom: 28px;
+}
+.price-divider {
+  height: 1px; background: #1e1c1a; margin-bottom: 24px;
+}
+.trust-item {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 12px; color: #5a5350;
+  padding: 11px 0; border-bottom: 1px solid #1a1814;
+}
+.trust-item:last-of-type { border-bottom: none; }
+.trust-check {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #1e1c1a; color: #c7a17a;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0; font-weight: 700;
+}
+.cta-btn {
+  display: block; margin-top: 28px;
+  background: #c7a17a; color: #fff;
+  text-align: center; padding: 17px;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  text-decoration: none;
+  transition: background .25s ease;
+}
+.cta-btn:hover { background: #b08860; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .sd-body {
+    grid-template-columns: 1fr;
+    padding: 36px 24px;
+  }
+  .left-col { padding-right: 0; margin-bottom: 30px; }
+  .price-panel { position: static; }
+}
+@media (max-width: 640px) {
+  .hero { padding: 44px 24px 36px; }
+  .hero-stats { gap: 22px; flex-wrap: wrap; }
+  .features { grid-template-columns: 1fr; }
+  .left-col h2 { font-size: 32px; }
+  .process-steps { gap: 14px; }
+  .process-steps::before { display: none; }
+}
+</style>
+
+{% endblock %}

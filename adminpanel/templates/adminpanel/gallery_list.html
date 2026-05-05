@@ -1,0 +1,59 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}Gallery | Smart Tailors{% endblock %}
+{% block nav_gallery %}active{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Gallery Management</h1>
+        <p class="page-subtitle">Manage portfolio images and tailoring collections.</p>
+    </div>
+
+    <a href="{% url 'gallery_add' %}" class="btn-primary">
+        <i class="fa-solid fa-plus"></i> Add Image
+    </a>
+</div>
+
+<div class="row g-3">
+    {% for g in gallery %}
+    <div class="col-xl-3 col-lg-4 col-md-6">
+        <div class="card gallery-card">
+            <div class="gallery-image-wrap">
+                <img src="{{ g.image.url }}" alt="{{ g.title }}" class="gallery-img">
+            </div>
+
+            <div class="card-body">
+                <h6 class="gallery-title">{{ g.title }}</h6>
+
+                <span class="badge badge-progress">
+                    {{ g.category }}
+                </span>
+
+                <div class="gallery-actions">
+                    <a href="{% url 'gallery_edit' g.id %}" class="btn-secondary btn-sm">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </a>
+
+                    <form method="post" action="{% url 'gallery_delete' g.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete btn-sm" onclick="return confirm('Delete this image?')">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="card empty-gallery">
+            <i class="fa-regular fa-images"></i>
+            <h6>No gallery images found</h6>
+            <p>Add your first gallery image to display your work.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

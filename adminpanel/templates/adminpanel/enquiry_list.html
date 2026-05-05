@@ -1,0 +1,70 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}Enquiries | Smart Tailors{% endblock %}
+{% block nav_enquiries %}active{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Contact Enquiries</h1>
+        <p class="page-subtitle">Track and manage customer enquiries</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-head">
+        <div>
+            <div class="card-title">Enquiry List</div>
+            <div class="card-subtitle">Recent customer messages</div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in enquiries %}
+                <tr>
+                    <td><strong>{{ e.name }}</strong></td>
+                    <td>{{ e.phone }}</td>
+                    <td>{{ e.email }}</td>
+                    <td>{{ e.subject }}</td>
+
+                    <td>
+                        {% if e.enquiry_status == 'Resolved' %}
+                            <span class="badge badge-done">Resolved</span>
+                        {% elif e.enquiry_status == 'Pending' %}
+                            <span class="badge badge-pending">Pending</span>
+                        {% else %}
+                            <span class="badge badge-progress">{{ e.enquiry_status }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="text-end">
+                        <a href="{% url 'enquiry_edit' e.id %}" class="btn-secondary btn-sm">
+                            <i class="fa-solid fa-pen"></i> Update
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        No enquiries found
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}Prices | Smart Tailors{% endblock %}
+{% block nav_prices %}active{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Price Management</h1>
+        <p class="page-subtitle">Manage service pricing and effective dates.</p>
+    </div>
+
+    <a href="{% url 'price_add' %}" class="btn-primary">
+        <i class="fa-solid fa-plus"></i> Add Price
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-head">
+        <div>
+            <div class="card-title">Price List</div>
+            <div class="card-subtitle">All service pricing details</div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Price</th>
+                    <th>Effective From</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for p in prices %}
+                <tr>
+                    <td>
+                        <strong>{{ p.service.service_name }}</strong>
+                    </td>
+
+                    <td>
+                        <span class="badge badge-progress">
+                            ₹{{ p.price }}
+                        </span>
+                    </td>
+
+                    <td>{{ p.effective_from }}</td>
+
+                    <td class="text-end">
+                        <a href="{% url 'price_edit' p.id %}" class="btn-secondary btn-sm">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </a>
+
+                        <form method="post" action="{% url 'price_delete' p.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete btn-sm" onclick="return confirm('Delete this price?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                        No pricing data available
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

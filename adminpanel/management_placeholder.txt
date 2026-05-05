@@ -1,0 +1,1 @@
+Run migrations before importing seed_data.sql.

@@ -1,0 +1,728 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+<div class="checkout-wrap">
+
+  <div class="checkout-head">
+    <div class="step active">
+      <div class="step-num">1</div>
+      <span>Address</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step active">
+      <div class="step-num">2</div>
+      <span>Order Summary</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step active">
+      <div class="step-num">3</div>
+      <span>Payment</span>
+    </div>
+  </div>
+
+  <form method="post" id="checkout-form">
+    {% csrf_token %}
+
+    <div class="checkout-grid">
+      <div class="checkout-main">
+
+        <!-- SECTION 1: Delivery Address -->
+        <div class="checkout-card">
+          <div class="card-header">
+            <div class="card-num">1</div>
+            <div class="card-title">Delivery Address</div>
+          </div>
+          <div class="card-body">
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="full_name" value="{{ customer.full_name }}" placeholder="Enter full name" required>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" name="contact_phone" value="{{ customer.phone }}" placeholder="+91 00000 00000" required>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Pincode</label>
+                <input type="text" name="pincode" placeholder="600001" required>
+              </div>
+              <div class="form-group">
+                <label>City</label>
+                <input type="text" name="city" placeholder="Chennai" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>House No / Building Name</label>
+              <input type="text" name="house_no" placeholder="Flat 4B, Green Towers" required>
+            </div>
+
+            <div class="form-group">
+              <label>Road Name / Area / Colony</label>
+              <input type="text" name="area" placeholder="Anna Nagar West" required>
+            </div>
+
+            <div class="form-group">
+              <label>Landmark</label>
+              <input type="text" name="landmark" placeholder="Near SBI Bank">
+            </div>
+
+            <div class="form-group">
+              <label>Address Type</label>
+              <div class="address-type">
+                <label class="addr-opt">
+                  <input type="radio" name="address_type" value="Home" checked>
+                  <span>Home</span>
+                </label>
+                <label class="addr-opt">
+                  <input type="radio" name="address_type" value="Work">
+                  <span>Work</span>
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 2: Order Summary -->
+        <div class="checkout-card">
+          <div class="card-header">
+            <div class="card-num">2</div>
+            <div class="card-title">Order Summary</div>
+          </div>
+          <div class="card-body">
+
+            <div class="product-row">
+              <div class="product-icon">✂</div>
+              <div class="product-info">
+                <h3>{{ service.service_name }}</h3>
+                <p>{{ service.service_description|default:"Premium tailoring service with professional fitting and finishing." }}</p>
+              </div>
+              <div class="product-price">₹{{ price }}</div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" name="quantity" value="1" min="1" required>
+              </div>
+              <div class="form-group">
+                <label>Delivery Date</label>
+                <input type="date" name="delivery_date" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Select Saved Measurement</label>
+              <select name="measurement_ref" required>
+                <option value="">Choose measurement</option>
+                {% for m in men_measurements %}
+                <option value="men-{{ m.id }}">Men Measurement #{{ m.id }}</option>
+                {% endfor %}
+                {% for m in ladies_measurements %}
+                <option value="ladies-{{ m.id }}">Ladies Measurement #{{ m.id }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Order Notes</label>
+              <textarea name="notes" rows="4" placeholder="Fabric color, design details, special instructions..."></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 3: Payment -->
+        <div class="checkout-card">
+          <div class="card-header">
+            <div class="card-num">3</div>
+            <div class="card-title">Payment Method</div>
+          </div>
+          <div class="card-body">
+
+            <div class="payment-options">
+
+              <!-- Cash on Delivery -->
+              <label class="pay-opt" onclick="showPayPanel('cod')">
+                <input type="radio" name="payment_method" value="Cash on Delivery" checked>
+                <div class="pay-icon pay-icon-cod">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="7" width="20" height="14" rx="1"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+                  </svg>
+                </div>
+                <div class="pay-info">
+                  <span class="pay-label">Cash on Delivery</span>
+                  <span class="pay-sub">Pay when your order arrives</span>
+                </div>
+                <div class="pay-chevron">›</div>
+              </label>
+
+              <!-- UPI -->
+              <label class="pay-opt" onclick="showPayPanel('upi')">
+                <input type="radio" name="payment_method" value="UPI">
+                <div class="pay-icon pay-icon-upi">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                  </svg>
+                </div>
+                <div class="pay-info">
+                  <span class="pay-label">UPI</span>
+                  <span class="pay-sub">PhonePe, GPay, Paytm &amp; more</span>
+                </div>
+                <div class="pay-chevron">›</div>
+              </label>
+
+              <!-- Card -->
+              <label class="pay-opt" onclick="showPayPanel('card')">
+                <input type="radio" name="payment_method" value="Card">
+                <div class="pay-icon pay-icon-card">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+                  </svg>
+                </div>
+                <div class="pay-info">
+                  <span class="pay-label">Debit / Credit Card</span>
+                  <span class="pay-sub">Visa, Mastercard, RuPay</span>
+                </div>
+                <div class="pay-chevron">›</div>
+              </label>
+
+            </div>
+
+            <!-- ── COD Panel ── -->
+            <div class="pay-panel" id="panel-cod">
+              <div class="cod-info">
+                <div class="cod-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#187c36" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="cod-title">Pay on delivery</p>
+                  <p class="cod-desc">Keep exact change ready. Our delivery partner will collect payment when your order arrives.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── UPI Panel ── -->
+            <div class="pay-panel" id="panel-upi" style="display:none;">
+              <p class="panel-label">Choose UPI App</p>
+              <div class="upi-apps">
+
+                <label class="upi-app-opt">
+                  <input type="radio" name="upi_app" value="phonepe">
+                  <div class="upi-app-card">
+                    <div class="upi-logo phonepe-logo">
+                      <svg viewBox="0 0 40 40" width="36" height="36">
+                        <rect width="40" height="40" rx="10" fill="#5f259f"/>
+                        <path d="M20 8c-6.6 0-12 5.4-12 12s5.4 12 12 12c3.2 0 6.1-1.3 8.3-3.3l-2.8-2.8C24 27.5 22.1 28 20 28c-4.4 0-8-3.6-8-8s3.6-8 8-8c2.2 0 4.2.9 5.7 2.3L28 11.7C25.8 9.6 23 8 20 8z" fill="#fff"/>
+                        <path d="M26 16h-4v-4l-6 8h4v4l6-8z" fill="#fff"/>
+                      </svg>
+                    </div>
+                    <span class="upi-app-name">PhonePe</span>
+                  </div>
+                </label>
+
+                <label class="upi-app-opt">
+                  <input type="radio" name="upi_app" value="gpay">
+                  <div class="upi-app-card">
+                    <div class="upi-logo gpay-logo">
+                      <svg viewBox="0 0 40 40" width="36" height="36">
+                        <rect width="40" height="40" rx="10" fill="#fff"/>
+                        <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" font-size="12" font-weight="700" font-family="sans-serif">
+                          <tspan fill="#4285F4">G</tspan><tspan fill="#EA4335">P</tspan><tspan fill="#FBBC05">a</tspan><tspan fill="#34A853">y</tspan>
+                        </text>
+                      </svg>
+                    </div>
+                    <span class="upi-app-name">Google Pay</span>
+                  </div>
+                </label>
+
+                <label class="upi-app-opt">
+                  <input type="radio" name="upi_app" value="paytm">
+                  <div class="upi-app-card">
+                    <div class="upi-logo paytm-logo">
+                      <svg viewBox="0 0 40 40" width="36" height="36">
+                        <rect width="40" height="40" rx="10" fill="#002970"/>
+                        <rect x="8" y="12" width="10" height="16" rx="1" fill="#00BAF2"/>
+                        <rect x="22" y="12" width="10" height="16" rx="1" fill="#fff"/>
+                        <rect x="13" y="17" width="14" height="6" rx="1" fill="#00BAF2"/>
+                      </svg>
+                    </div>
+                    <span class="upi-app-name">Paytm</span>
+                  </div>
+                </label>
+
+                <label class="upi-app-opt">
+                  <input type="radio" name="upi_app" value="other_upi">
+                  <div class="upi-app-card">
+                    <div class="upi-logo other-logo">
+                      <svg viewBox="0 0 40 40" width="36" height="36">
+                        <rect width="40" height="40" rx="10" fill="#f0ede8"/>
+                        <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#555">⋯</text>
+                      </svg>
+                    </div>
+                    <span class="upi-app-name">Other UPI</span>
+                  </div>
+                </label>
+
+              </div>
+
+              <div class="upi-id-field" id="upi-id-field">
+                <label>UPI ID</label>
+                <div class="upi-id-row">
+                  <input type="text" name="upi_id" id="upi-id-input" placeholder="yourname@upi" autocomplete="off">
+                  <button type="button" class="verify-btn" onclick="verifyUPI()">Verify</button>
+                </div>
+                <span class="upi-hint">Example: 9876543210@ybl &nbsp;|&nbsp; name@oksbi</span>
+              </div>
+            </div>
+
+            <!-- ── Card Panel ── -->
+            <div class="pay-panel" id="panel-card" style="display:none;">
+              <p class="panel-label">Card Details</p>
+
+              <div class="card-preview" id="card-preview">
+                <div class="cp-top">
+                  <span class="cp-bank">Smart Tailors</span>
+                  <div class="cp-chip">
+                    <svg width="28" height="22" viewBox="0 0 28 22">
+                      <rect width="28" height="22" rx="3" fill="#d4a853"/>
+                      <line x1="0" y1="7" x2="28" y2="7" stroke="#b8902a" stroke-width="1"/>
+                      <line x1="0" y1="15" x2="28" y2="15" stroke="#b8902a" stroke-width="1"/>
+                      <line x1="9" y1="0" x2="9" y2="22" stroke="#b8902a" stroke-width="1"/>
+                      <line x1="19" y1="0" x2="19" y2="22" stroke="#b8902a" stroke-width="1"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="cp-number" id="cp-number">•••• &nbsp;•••• &nbsp;•••• &nbsp;••••</div>
+                <div class="cp-bottom">
+                  <div>
+                    <div class="cp-lbl">Card Holder</div>
+                    <div class="cp-val" id="cp-name">YOUR NAME</div>
+                  </div>
+                  <div>
+                    <div class="cp-lbl">Expires</div>
+                    <div class="cp-val" id="cp-exp">MM / YY</div>
+                  </div>
+                  <div class="cp-network" id="cp-network"></div>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top:20px;">
+                <label>Card Number</label>
+                <input type="text" name="card_number" id="inp-card-number" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number">
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Name on Card</label>
+                  <input type="text" name="card_name" id="inp-card-name" placeholder="As printed on card" autocomplete="cc-name">
+                </div>
+                <div class="form-group">
+                  <label>Expiry</label>
+                  <input type="text" name="card_expiry" id="inp-card-expiry" placeholder="MM / YY" maxlength="7" autocomplete="cc-exp">
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>CVV</label>
+                  <input type="password" name="card_cvv" id="inp-card-cvv" placeholder="•••" maxlength="4" autocomplete="cc-csc">
+                </div>
+                <div class="form-group cvv-hint-group">
+                  <label>&nbsp;</label>
+                  <div class="cvv-hint">
+                    <svg width="32" height="22" viewBox="0 0 32 22" style="flex-shrink:0;">
+                      <rect width="32" height="22" rx="3" fill="#ddd6ce"/>
+                      <rect x="0" y="4" width="32" height="6" fill="#111"/>
+                      <rect x="4" y="13" width="18" height="5" rx="1" fill="#fff"/>
+                      <rect x="23" y="13" width="6" height="5" rx="1" fill="#fff"/>
+                    </svg>
+                    <span>3-digit code on the back of your card (4-digit for Amex)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-logos">
+                <span class="card-logo-badge visa">VISA</span>
+                <span class="card-logo-badge mc">
+                  <span style="background:#eb001b;width:18px;height:18px;border-radius:50%;display:inline-block;vertical-align:middle;"></span>
+                  <span style="background:#f79e1b;width:18px;height:18px;border-radius:50%;display:inline-block;vertical-align:middle;margin-left:-8px;"></span>
+                </span>
+                <span class="card-logo-badge rupay">RuPay</span>
+              </div>
+
+            </div>
+
+            <!-- Advance Amount -->
+            <div class="form-group advance-field">
+              <label>Advance Amount (₹)</label>
+              <input type="number" name="advance_amount" value="0" min="0">
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="checkout-side">
+        <div class="price-summary">
+          <div class="price-head">Price Details</div>
+
+          <div class="price-line">
+            <span>Service Price</span>
+            <strong>₹{{ price }}</strong>
+          </div>
+
+          <div class="price-line">
+            <span>Delivery Fee</span>
+            <strong class="free-tag">Free</strong>
+          </div>
+
+          <div class="price-line total">
+            <span>Total Amount</span>
+            <strong>₹{{ price }}</strong>
+          </div>
+
+          <div class="save-box">Your order will be confirmed after submission.</div>
+
+          <button type="submit" class="continue-btn">Place Order</button>
+
+          <a href="{% url 'customer_service_detail' service.id %}" class="cancel-link">← Back to service</a>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<style>
+/* ─── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── Wrapper ──────────────────────────────────────────────── */
+.checkout-wrap {
+  max-width: 1280px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: sans-serif;
+}
+
+/* ─── Step Header ──────────────────────────────────────────── */
+.checkout-head {
+  background: #fff;
+  border: 1px solid #eee7df;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 20px 32px;
+  margin-bottom: 24px;
+}
+.step { display: flex; align-items: center; gap: 10px; color: #111; }
+.step-num {
+  width: 28px; height: 28px;
+  background: #111; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.step span { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #111; }
+.step-line { width: 48px; height: 1px; background: #ddd6ce; margin: 0 16px; flex-shrink: 0; }
+
+/* ─── Grid Layout ──────────────────────────────────────────── */
+.checkout-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: flex-start; }
+
+/* ─── Cards ────────────────────────────────────────────────── */
+.checkout-card { background: #fff; border: 1px solid #eee7df; margin-bottom: 20px; overflow: hidden; }
+.card-header { display: flex; align-items: center; gap: 12px; padding: 16px 24px; border-bottom: 1px solid #eee7df; background: #faf8f5; }
+.card-num { width: 24px; height: 24px; background: #111; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.card-title { font-size: 13px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #111; }
+.card-body { padding: 24px; }
+
+/* ─── Form Elements ────────────────────────────────────────── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 18px; }
+.form-group:last-child { margin-bottom: 0; }
+.form-group label { display: block; font-size: 10px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; color: #555; }
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%; border: 1px solid #ddd6ce; background: #faf8f5;
+  padding: 12px 14px; font-size: 14px; color: #111; outline: none;
+  transition: border-color .15s, background .15s; font-family: inherit;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus { border-color: #111; background: #fff; }
+.form-group textarea { resize: vertical; }
+
+/* ─── Address Type ─────────────────────────────────────────── */
+.address-type { display: flex; gap: 10px; }
+.addr-opt { position: relative; cursor: pointer; }
+.addr-opt input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+.addr-opt span { display: inline-block; border: 1px solid #ddd6ce; padding: 10px 22px; font-size: 12px; font-weight: 700; letter-spacing: 1px; background: #faf8f5; color: #444; cursor: pointer; transition: all .15s; }
+.addr-opt input[type="radio"]:checked + span { background: #111; color: #fff; border-color: #111; }
+
+/* ─── Product Row ──────────────────────────────────────────── */
+.product-row { display: flex; gap: 20px; align-items: flex-start; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid #eee7df; }
+.product-icon { width: 60px; height: 60px; background: #111; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.product-info { flex: 1; }
+.product-info h3 { font-size: 18px; font-weight: 900; color: #111; margin-bottom: 6px; }
+.product-info p { font-size: 13px; color: #777; line-height: 1.6; }
+.product-price { font-size: 22px; font-weight: 900; color: #111; white-space: nowrap; }
+
+/* ─── Payment Options ──────────────────────────────────────── */
+.payment-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+.pay-opt {
+  display: flex; align-items: center; gap: 14px;
+  border: 1px solid #ddd6ce; padding: 14px 16px;
+  cursor: pointer; background: #faf8f5; transition: all .15s;
+  position: relative;
+}
+.pay-opt:has(input:checked) { border-color: #111; background: #fff; }
+.pay-opt input[type="radio"] { width: auto; accent-color: #111; flex-shrink: 0; }
+
+.pay-icon {
+  width: 36px; height: 36px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.pay-icon-cod  { background: #e9f8ee; color: #187c36; }
+.pay-icon-upi  { background: #eee8ff; color: #5f259f; }
+.pay-icon-card { background: #fff3e0; color: #e65100; }
+
+.pay-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.pay-label { font-size: 13px; font-weight: 700; color: #111; }
+.pay-sub   { font-size: 11px; color: #888; }
+.pay-chevron { font-size: 18px; color: #bbb; margin-left: auto; }
+
+/* ─── Pay Panels ───────────────────────────────────────────── */
+.pay-panel {
+  border: 1px solid #eee7df;
+  background: #fdfcfb;
+  padding: 20px;
+  margin-bottom: 16px;
+  animation: panelIn .2s ease;
+}
+@keyframes panelIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+.panel-label { font-size: 10px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 14px; }
+
+/* COD */
+.cod-info { display: flex; gap: 14px; align-items: flex-start; }
+.cod-icon { flex-shrink: 0; margin-top: 2px; }
+.cod-title { font-size: 14px; font-weight: 700; color: #187c36; margin-bottom: 4px; }
+.cod-desc  { font-size: 13px; color: #555; line-height: 1.6; }
+
+/* UPI Apps */
+.upi-apps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+
+.upi-app-opt { cursor: pointer; }
+.upi-app-opt input[type="radio"] { display: none; }
+
+.upi-app-card {
+  border: 1.5px solid #ddd6ce; background: #fff; border-radius: 8px;
+  padding: 12px 6px 10px; display: flex; flex-direction: column;
+  align-items: center; gap: 8px; transition: all .15s; cursor: pointer;
+}
+.upi-app-opt input:checked + .upi-app-card { border-color: #111; background: #f9f7f4; box-shadow: 0 0 0 2px #111; }
+.upi-app-card:hover { border-color: #999; }
+
+.upi-logo { border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.gpay-logo { border: 1px solid #eee; }
+.upi-app-name { font-size: 11px; font-weight: 700; letter-spacing: .5px; color: #333; text-align: center; }
+
+.upi-id-field { margin-top: 4px; }
+.upi-id-field label { display: block; font-size: 10px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 8px; }
+.upi-id-row { display: flex; gap: 0; }
+.upi-id-row input { flex: 1; border: 1px solid #ddd6ce; border-right: none; background: #fff; padding: 12px 14px; font-size: 14px; color: #111; outline: none; transition: border-color .15s; font-family: monospace; }
+.upi-id-row input:focus { border-color: #5f259f; }
+.verify-btn { padding: 12px 20px; background: #5f259f; color: #fff; border: 1px solid #5f259f; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.verify-btn:hover { background: #4a1d7a; }
+.upi-hint { display: block; margin-top: 6px; font-size: 11px; color: #999; }
+
+/* Card Preview */
+.card-preview {
+  width: 100%; max-width: 360px;
+  background: linear-gradient(135deg, #1a1814 60%, #3d3830);
+  border-radius: 14px; padding: 22px 24px 20px;
+  color: #fff; position: relative; overflow: hidden;
+  margin-bottom: 4px;
+  box-shadow: 0 8px 28px rgba(26,24,20,.22);
+}
+.card-preview::before {
+  content: '';
+  position: absolute; right: -30px; top: -30px;
+  width: 120px; height: 120px;
+  border-radius: 50%; background: rgba(255,255,255,.04);
+}
+.cp-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+.cp-bank { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: .6; }
+.cp-number { font-size: 18px; font-weight: 700; letter-spacing: 4px; font-family: monospace; margin-bottom: 18px; }
+.cp-bottom { display: flex; align-items: flex-end; gap: 28px; }
+.cp-lbl { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; opacity: .5; margin-bottom: 3px; }
+.cp-val { font-size: 13px; font-weight: 700; letter-spacing: 1px; font-family: monospace; }
+.cp-network { margin-left: auto; font-size: 14px; font-weight: 900; letter-spacing: 1px; }
+
+/* Card input fields (inside panel, different style) */
+.pay-panel .form-group input {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+.pay-panel .form-group { margin-bottom: 16px; }
+
+/* CVV hint */
+.cvv-hint-group { display: flex; flex-direction: column; }
+.cvv-hint { display: flex; align-items: center; gap: 10px; font-size: 11px; color: #888; line-height: 1.5; margin-top: auto; padding-top: 8px; }
+
+/* Card logo badges */
+.card-logos { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee7df; }
+.card-logo-badge {
+  border: 1px solid #ddd6ce; padding: 4px 12px;
+  font-size: 11px; font-weight: 900; border-radius: 3px;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.visa   { color: #1a1f71; letter-spacing: 2px; }
+.rupay  { color: #1a6e3b; letter-spacing: 1px; }
+
+/* ─── Advance ──────────────────────────────────────────────── */
+.advance-field { padding-top: 18px; border-top: 1px solid #eee7df; margin-top: 4px; }
+
+/* ─── Sidebar ──────────────────────────────────────────────── */
+.checkout-side { position: sticky; top: 90px; }
+.price-summary { background: #fff; border: 1px solid #eee7df; overflow: hidden; }
+.price-head { background: #faf8f5; border-bottom: 1px solid #eee7df; padding: 16px 24px; font-size: 13px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #111; }
+.price-line { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; border-bottom: 1px solid #eee7df; font-size: 14px; }
+.price-line span { color: #555; }
+.price-line strong { color: #111; font-weight: 700; }
+.price-line.total { border-bottom: none; padding: 18px 24px; font-size: 16px; }
+.price-line.total span { color: #111; font-weight: 900; }
+.price-line.total strong { font-size: 22px; font-weight: 900; }
+.free-tag { color: #187c36 !important; }
+.save-box { margin: 0 24px 16px; background: #e9f8ee; color: #187c36; padding: 12px 14px; font-size: 12px; font-weight: 700; border-left: 3px solid #187c36; }
+.continue-btn { display: block; width: calc(100% - 48px); margin: 0 24px; height: 50px; background: #111; color: #fff; border: 1px solid #111; font-size: 12px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background .15s, color .15s; }
+.continue-btn:hover { background: transparent; color: #111; }
+.cancel-link { display: block; text-align: center; margin: 14px 24px 20px; color: #555; text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
+.cancel-link:hover { color: #111; }
+
+/* ─── Responsive ───────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .checkout-grid { grid-template-columns: 1fr; }
+  .checkout-side { position: static; }
+}
+@media (max-width: 600px) {
+  .checkout-head { gap: 8px; flex-wrap: wrap; justify-content: flex-start; }
+  .step-line { display: none; }
+  .form-grid { grid-template-columns: 1fr; }
+  .product-row { flex-wrap: wrap; }
+  .product-price { width: 100%; text-align: left; }
+  .continue-btn { width: calc(100% - 48px); }
+  .upi-apps { grid-template-columns: repeat(2, 1fr); }
+  .card-preview { max-width: 100%; }
+  .cp-number { font-size: 15px; letter-spacing: 2px; }
+}
+</style>
+
+<script>
+// ── Show/hide payment panels ──────────────────────────────────
+function showPayPanel(type) {
+  document.querySelectorAll('.pay-panel').forEach(p => p.style.display = 'none');
+  var el = document.getElementById('panel-' + type);
+  if (el) el.style.display = 'block';
+}
+
+// Show COD by default on load
+document.addEventListener('DOMContentLoaded', function() {
+  showPayPanel('cod');
+
+  // Sync radio click with panel
+  document.querySelectorAll('input[name="payment_method"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+      var map = {'Cash on Delivery': 'cod', 'UPI': 'upi', 'Card': 'card'};
+      showPayPanel(map[this.value] || 'cod');
+    });
+  });
+});
+
+// ── Card number formatter ─────────────────────────────────────
+var cardNumInp = document.getElementById('inp-card-number');
+if (cardNumInp) {
+  cardNumInp.addEventListener('input', function() {
+    var v = this.value.replace(/\D/g, '').substring(0, 16);
+    this.value = v.replace(/(.{4})/g, '$1 ').trim();
+    var display = v ? v.replace(/(.{4})/g, '$1 ').trim().padEnd(19, '•').replace(/ /g, ' ') : '•••• &nbsp;•••• &nbsp;•••• &nbsp;••••';
+    document.getElementById('cp-number').innerHTML = v.length ? formatDisplay(v) : '•••• &nbsp;•••• &nbsp;•••• &nbsp;••••';
+    detectNetwork(v);
+  });
+}
+
+function formatDisplay(v) {
+  var chunks = [];
+  for (var i = 0; i < 16; i += 4) {
+    var chunk = v.substring(i, i+4);
+    if (!chunk) chunk = '••••';
+    else if (chunk.length < 4) chunk = chunk + '•'.repeat(4 - chunk.length);
+    chunks.push(chunk);
+  }
+  return chunks.join(' &nbsp;');
+}
+
+function detectNetwork(v) {
+  var el = document.getElementById('cp-network');
+  if (!el) return;
+  if (/^4/.test(v))        { el.textContent = 'VISA'; el.style.color = '#a0c4ff'; }
+  else if (/^5[1-5]/.test(v)) { el.textContent = 'MC'; el.style.color = '#ffb347'; }
+  else if (/^6/.test(v))  { el.textContent = 'RuPay'; el.style.color = '#90ee90'; }
+  else                     { el.textContent = ''; }
+}
+
+// ── Card name live ────────────────────────────────────────────
+var cardNameInp = document.getElementById('inp-card-name');
+if (cardNameInp) {
+  cardNameInp.addEventListener('input', function() {
+    document.getElementById('cp-name').textContent = this.value.toUpperCase() || 'YOUR NAME';
+  });
+}
+
+// ── Expiry formatter ──────────────────────────────────────────
+var expiryInp = document.getElementById('inp-card-expiry');
+if (expiryInp) {
+  expiryInp.addEventListener('input', function() {
+    var v = this.value.replace(/\D/g, '').substring(0, 4);
+    if (v.length >= 3) v = v.substring(0,2) + ' / ' + v.substring(2);
+    this.value = v;
+    document.getElementById('cp-exp').textContent = this.value || 'MM / YY';
+  });
+}
+
+// ── UPI verify mock ───────────────────────────────────────────
+function verifyUPI() {
+  var inp = document.getElementById('upi-id-input');
+  if (!inp) return;
+  var val = inp.value.trim();
+  var btn = document.querySelector('.verify-btn');
+  if (!val || !val.includes('@')) {
+    inp.style.borderColor = '#c0392b';
+    inp.focus();
+    return;
+  }
+  btn.textContent = 'Verifying...';
+  btn.disabled = true;
+  setTimeout(function() {
+    btn.textContent = '✓ Verified';
+    btn.style.background = '#187c36';
+    btn.style.borderColor = '#187c36';
+    inp.style.borderColor = '#187c36';
+  }, 1200);
+}
+</script>
+
+{% endblock %}

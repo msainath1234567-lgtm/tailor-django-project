@@ -1,0 +1,58 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - Smart Tailors</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'adminpanel/css/login.css' %}">
+</head>
+
+<body>
+
+<div class="login-card">
+
+    <div class="brand">
+        <div class="brand-logo">ST</div>
+        <div>
+            <h5 class="brand-title">Smart Tailors</h5>
+            <small class="text-muted">Admin Panel</small>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger py-2">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input name="username" class="form-control" placeholder="Enter username" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+        </div>
+
+        <button class="btn btn-login w-100">
+            Login
+        </button>
+    </form>
+
+    <div class="footer-text">
+        © Smart Tailors Admin
+    </div>
+
+</div>
+
+</body>
+</html>

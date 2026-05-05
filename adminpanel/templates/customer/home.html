@@ -1,0 +1,286 @@
+{% extends 'customer/base.html' %}
+{% block block_main %}
+
+
+
+<!-- ══ HERO ══ -->
+<section class="mk-hero">
+  <div class="mk-hero-left">
+
+    <div class="mk-hero-issue">
+      <span class="brand sans">MK Tailors</span>
+      <span class="meta sans">Smart Tailoring Studio</span>
+    </div>
+
+    <div class="mk-hero-mid">
+      <div class="mk-hero-kicker">
+        <span class="cap">New Collection</span>
+      </div>
+
+      <h1 class="mk-hero-h1">
+        The Art of
+        <strong>Perfect Fit.</strong>
+      </h1>
+
+      <p class="mk-hero-sub sans">
+        Bespoke tailoring built around you — every measurement saved,
+        every stitch tracked, every garment delivered to perfection.
+      </p>
+
+      <div class="mk-hero-actions">
+        <a href="{% url 'customer_services' %}" class="btn-ed-primary sans">Explore Services</a>
+        <a href="{% url 'customer_register' %}" class="btn-ed-link sans">
+          Create Account <span class="arr">→</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="mk-hero-foot">
+      <div class="mk-mini-stat">
+        <div class="n sans">25+</div>
+        <div class="l sans">Services</div>
+      </div>
+      <div class="mk-mini-divider"></div>
+      <div class="mk-mini-stat">
+        <div class="n sans">500+</div>
+        <div class="l sans">Orders</div>
+      </div>
+      <div class="mk-mini-divider"></div>
+      <div class="mk-mini-stat">
+        <div class="n sans">4.9★</div>
+        <div class="l sans">Rating</div>
+      </div>
+      <div class="mk-mini-divider"></div>
+      <div class="mk-mini-stat">
+        <div class="n sans">100%</div>
+        <div class="l sans">Custom</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="mk-hero-right">
+    <div class="mk-hero-photo-top"></div>
+    <div class="mk-hero-photo-bot"></div>
+    <div class="mk-photo-label">
+      <div class="cap">Customer Rating</div>
+      <div class="val sans">4.9 / 5.0</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="mk-marquee-wrap">
+  <div class="mk-marquee-track sans">
+    <span>Bespoke Tailoring</span><span class="dot">·</span>
+    <span>Perfect Measurements</span><span class="dot">·</span>
+    <span>Premium Finish</span><span class="dot">·</span>
+    <span>Live Order Tracking</span><span class="dot">·</span>
+    <span>Custom Fit Guaranteed</span><span class="dot">·</span>
+    <span>MK Tailors Studio</span><span class="dot">·</span>
+    <span>Bespoke Tailoring</span><span class="dot">·</span>
+    <span>Perfect Measurements</span><span class="dot">·</span>
+    <span>Premium Finish</span><span class="dot">·</span>
+    <span>Live Order Tracking</span><span class="dot">·</span>
+    <span>Custom Fit Guaranteed</span><span class="dot">·</span>
+    <span>MK Tailors Studio</span><span class="dot">·</span>
+  </div>
+</div>
+
+<!-- ══ SERVICES ══ -->
+<section class="mk-svc-sec">
+  <div class="container-fluid px-4 px-md-5">
+
+    <div class="mk-ed-header reveal">
+      <div>
+        <div class="cap" style="color:var(--red);margin-bottom:10px;">— Collection</div>
+        <h2 class="mk-ed-h2">Popular <strong>Services</strong></h2>
+      </div>
+      <div class="rule-fill"></div>
+      <a href="{% url 'customer_services' %}" class="btn-ed-link sans" style="margin-bottom:6px;">
+        View All <span class="arr">→</span>
+      </a>
+    </div>
+
+    <div class="mk-svc-layout reveal">
+
+      <!-- Main 2-col grid -->
+      <div class="mk-svc-main">
+        {% for s in services %}
+        <div class="mk-svc-card">
+          <div class="svc-n sans">0{{ forloop.counter }}</div>
+          <div class="svc-title">{{ s.service_name }}</div>
+          <div class="svc-body sans">{{ s.service_description }}</div>
+          <div class="svc-row">
+            <span class="svc-tag sans">{{ s.gender_type }}</span>
+            {% with latest=s.prices.last %}
+              {% if latest %}
+                <span class="svc-amt sans">₹{{ latest.price }}</span>
+              {% endif %}
+            {% endwith %}
+          </div>
+        </div>
+        {% empty %}
+        <div class="mk-svc-card" style="grid-column:1/-1;text-align:center;padding:80px;">
+          <p style="font-size:20px;font-style:italic;color:var(--soft);">No services yet.</p>
+          <p class="sans" style="font-size:12px;color:var(--soft);margin-top:8px;">Add services from the admin panel.</p>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Aside -->
+      <div class="mk-svc-aside">
+        <div>
+          <div class="mk-svc-aside-num sans">25+</div>
+          <div class="mk-svc-aside-label">services available</div>
+          <p class="sans">Every stitch is done with care — each service customised to your body, your fabric, your style.</p>
+          <a href="{% url 'customer_services' %}" class="btn-ed-primary sans">Book a Service</a>
+        </div>
+        <div style="margin-top:48px;">
+          <div class="rule-accent"></div>
+          <p class="sans" style="font-size:11px;color:var(--soft);line-height:1.8;">
+            Over 500 orders completed.<br>4.9★ average customer rating.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ PULL QUOTE / WHY US ══ -->
+<div class="mk-pull reveal">
+  <div class="container">
+    <div class="mk-pull-inner">
+
+      <blockquote class="mk-pull-quote">
+        Every garment carries the mark of meticulous care — from the first measurement to the final stitch.
+      </blockquote>
+
+      <div class="mk-pull-divider"></div>
+
+      <div>
+        <div class="cap" style="color:var(--red);margin-bottom:20px;">— Why Choose Us</div>
+        <ul class="mk-pull-list sans">
+          <li>Measurements saved securely for every future order</li>
+          <li>Live tracking through cutting, stitching and finishing</li>
+          <li>Premium finish with clean edges and perfect fit</li>
+          <li>Dedicated support from first booking to delivery</li>
+        </ul>
+        <div class="mk-pull-cta">
+          <a href="{% url 'customer_register' %}" class="btn-ed-primary sans">Start Your Order</a>
+          <span class="sans" style="font-size:11px;color:var(--soft);">Free account · No commitment</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{# ══ GALLERY SECTION — paste this into your home template ══ #}
+
+<section class="mk-gallery-sec">
+  <div class="container-fluid px-4 px-md-5">
+
+    <div class="mk-ed-header reveal" style="margin-bottom:40px;">
+      <div>
+        <div class="cap" style="color:var(--red);margin-bottom:10px;">— Portfolio</div>
+        <h2 class="mk-ed-h2">Latest <strong>Works</strong></h2>
+      </div>
+      <div class="rule-fill"></div>
+      <a href="{% url 'customer_gallery' %}" class="btn-ed-link sans" style="margin-bottom:6px;">
+        Full Gallery <span class="arr">→</span>
+      </a>
+    </div>
+
+    {% if gallery %}
+      {# Count-based grid class — set once, used in CSS #}
+      {% with count=gallery|length %}
+      <div class="mk-mosaic mk-mosaic-{{ count }} reveal">
+        {% for g in gallery %}
+        <div class="mk-m-cell">
+          <img src="{{ g.image.url }}" alt="Tailoring work {{ forloop.counter }}">
+          <div class="mk-m-cap">
+            <span class="cap">View Piece</span>
+            <span class="arr sans">↗</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endwith %}
+    {% else %}
+    <div class="mk-gallery-empty reveal">
+      <h4>Gallery coming soon</h4>
+      <p class="sans">Upload photos from the admin panel</p>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="mk-cta reveal">
+  <div class="mk-cta-inner">
+
+    <!-- Left: dark CTA -->
+    <div class="mk-cta-left">
+      <div class="mk-cta-overline sans">Begin Your Experience</div>
+      <h2 class="mk-cta-h">
+        Your perfect fit
+        <strong>Awaits You.</strong>
+      </h2>
+      <p class="mk-cta-p sans">
+        Join hundreds of customers who trust MK Tailors
+        for a bespoke experience unlike any other.
+      </p>
+      <a href="{% url 'customer_register' %}" class="btn-ed-white sans">Create Your Account</a>
+    </div>
+
+    <!-- Right: how it works -->
+    <div class="mk-cta-right">
+      <div class="cap" style="color:var(--red);margin-bottom:16px;">— How It Works</div>
+      <h2 class="mk-ed-h2" style="margin-bottom:40px;">Three <strong>Simple Steps</strong></h2>
+      <ol class="mk-cta-steps">
+        <li class="mk-cta-step">
+          <span class="step-num sans">01</span>
+          <div>
+            <div class="step-title">Register &amp; Save Measurements</div>
+            <p class="step-desc sans">Create your account and enter your measurements once — we save them securely for all future orders.</p>
+          </div>
+        </li>
+        <li class="mk-cta-step">
+          <span class="step-num sans">02</span>
+          <div>
+            <div class="step-title">Choose a Service &amp; Place Order</div>
+            <p class="step-desc sans">Browse our catalog, pick your service, and confirm. We handle everything from there.</p>
+          </div>
+        </li>
+        <li class="mk-cta-step">
+          <span class="step-num sans">03</span>
+          <div>
+            <div class="step-title">Track &amp; Receive Your Garment</div>
+            <p class="step-desc sans">Follow live status updates through cutting, stitching and finishing — until it's in your hands.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ FOOTER STRIP ══ -->
+<div class="mk-foot-strip">
+  <div class="container d-flex align-items-center justify-content-between">
+    <span class="brand">MK Tailors</span>
+    <span class="tagline">Crafted with care, tailored for you.</span>
+  </div>
+</div>
+
+<script>
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: .08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+{% endblock %}{# block_main #}

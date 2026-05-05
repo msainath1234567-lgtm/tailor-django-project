@@ -1,0 +1,166 @@
+{% extends 'customer/base.html' %}
+{% block title %}Measurements — Smart Tailors{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+    <div class="page-hero-label">Smart Tailors</div>
+    <h1>My <em>Measurements</em></h1>
+    <p>Your body measurements, securely saved for every order.</p>
+</div>
+
+
+<div style="padding: 56px 0 80px;">
+    <div class="container">
+
+        <!-- Actions -->
+        <div class="section-header reveal">
+            <div>
+                <div class="section-eyebrow">Body Data</div>
+                <h1 class="section-title">My <em>Measurements</em></h1>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <a href="{% url 'customer_men_measurement_add' %}" class="btn-st btn-st-sm">+ Men</a>
+                <a href="{% url 'customer_ladies_measurement_add' %}" class="btn-st btn-st-sm btn-st-accent">+ Ladies</a>
+            </div>
+        </div>
+
+        <div class="meas-grid">
+
+            <!-- Men -->
+            <div class="meas-card reveal">
+                <div class="meas-card-head">
+                    <div>
+                        <div class="section-eyebrow">Male</div>
+                        <h2 class="section-title" style="font-size:22px;">Men's <em>Measurements</em></h2>
+                    </div>
+                    <span style="font-size:24px;">👔</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="st-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Chest</th>
+                                <th>Waist</th>
+                                <th>Shoulder</th>
+                                <th>Hip</th>
+                                <th>Photos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in men %}
+                            <tr>
+                                <td>{{ m.created_at|date:'d M Y' }}</td>
+                                <td>{{ m.chest|default:"—" }}"</td>
+                                <td>{{ m.waist|default:"—" }}"</td>
+                                <td>{{ m.shoulder|default:"—" }}"</td>
+                                <td>{{ m.hip|default:"—" }}</td>
+                                <td>
+                                    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                                        {% if m.photo_front %}
+                                            <a href="{{ m.photo_front.url }}" target="_blank" title="Front Photo">
+                                                <img src="{{ m.photo_front.url }}"
+                                                     alt="Front"
+                                                     style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #ddd;">
+                                            </a>
+                                        {% endif %}
+                                        {% if m.photo_back %}
+                                            <a href="{{ m.photo_back.url }}" target="_blank" title="Back Photo">
+                                                <img src="{{ m.photo_back.url }}"
+                                                     alt="Back"
+                                                     style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #ddd;">
+                                            </a>
+                                        {% endif %}
+                                        {% if m.photo_side %}
+                                            <a href="{{ m.photo_side.url }}" target="_blank" title="Side Photo">
+                                                <img src="{{ m.photo_side.url }}"
+                                                     alt="Side"
+                                                     style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #ddd;">
+                                            </a>
+                                        {% endif %}
+                                        {% if not m.photo_front and not m.photo_back and not m.photo_side %}
+                                            <span style="color:#aaa;font-size:12px;">No photos</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="empty-row"><td colspan="6">No men's measurements yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Ladies -->
+            <div class="meas-card reveal reveal-d1">
+                <div class="meas-card-head">
+                    <div>
+                        <div class="section-eyebrow">Female</div>
+                        <h2 class="section-title" style="font-size:22px;">Ladies' <em>Measurements</em></h2>
+                    </div>
+                    <span style="font-size:24px;">👗</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="st-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Bust</th>
+                                <th>Waist</th>
+                                <th>Hip</th>
+                                <th>Shoulder</th>
+                                <th>Photos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for l in ladies %}
+                            <tr>
+                                <td>{{ l.created_at|date:'d M Y' }}</td>
+                                <td>{{ l.bust|default:"—" }}"</td>
+                                <td>{{ l.waist|default:"—" }}"</td>
+                                <td>{{ l.hip|default:"—" }}"</td>
+                                <td>{{ l.shoulder|default:"—" }}</td>
+                                <td>
+                                    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                                        {% if l.photo_front %}
+                                            <a href="{{ l.photo_front.url }}" target="_blank" title="Front Photo">
+                                                <img src="{{ l.photo_front.url }}"
+                                                     alt="Front"
+                                                     style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #ddd;">
+                                            </a>
+                                        {% endif %}
+                                        {% if l.photo_back %}
+                                            <a href="{{ l.photo_back.url }}" target="_blank" title="Back Photo">
+                                                <img src="{{ l.photo_back.url }}"
+                                                     alt="Back"
+                                                     style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #ddd;">
+                                            </a>
+                                        {% endif %}
+                                        {% if l.photo_side %}
+                                            <a href="{{ l.photo_side.url }}" target="_blank" title="Side Photo">
+                                                <img src="{{ l.photo_side.url }}"
+                                                     alt="Side"
+                                                     style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #ddd;">
+                                            </a>
+                                        {% endif %}
+                                        {% if not l.photo_front and not l.photo_back and not l.photo_side %}
+                                            <span style="color:#aaa;font-size:12px;">No photos</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="empty-row"><td colspan="6">No ladies' measurements yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

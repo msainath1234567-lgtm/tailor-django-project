@@ -1,0 +1,52 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+
+
+<div class="auth-page">
+
+  <!-- LEFT -->
+  <div class="auth-left">
+    <div class="auth-left-photo"></div>
+    <div class="auth-left-content">
+      <div class="auth-brand">Smart Tailors</div>
+      <h2>Welcome<br><em>back.</em></h2>
+      <p>Sign in to track your orders, manage your measurements, and explore our bespoke services.</p>
+      <div class="auth-features">
+        <div class="auth-feature"><span class="auth-feature-dot"></span>View and track all your orders</div>
+        <div class="auth-feature"><span class="auth-feature-dot"></span>Saved measurements for faster booking</div>
+        <div class="auth-feature"><span class="auth-feature-dot"></span>Exclusive customer offers & updates</div>
+      </div>
+    </div>
+    <div class="auth-left-bottom">
+      <span>© 2026 Smart Tailors</span>
+      <span>Premium Tailoring</span>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="auth-right">
+    <div class="auth-form-label">Customer Portal</div>
+    <div class="auth-form-heading">Sign <em>In</em></div>
+    <div class="auth-form-sub">Enter your credentials to access your account.</div>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="auth-divider"></div>
+      <button type="submit" class="btn-auth">
+        Login
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </form>
+
+    <div class="auth-switch">
+      New customer? <a href="{% url 'customer_register' %}">Create an account</a>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'customer/base.html' %}
+{% block title %}Dashboard — Smart Tailors{% endblock %}
+
+{% block navbar %}
+<nav id="st-navbar">
+    <div class="st-nav-inner">
+        <a class="st-brand" href="{% url 'customer_home' %}">
+            <div class="st-brand-mark">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19.5 4.5C17.7 2.7 15 2 12 2 9 2 6.3 2.7 4.5 4.5S2 9 2 12c0 3 .7 5.7 2.5 7.5S9 22 12 22s5.7-.7 7.5-2.5S22 15 22 12c0-3-.7-5.7-2.5-7.5zM12 7a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm0 11c-2.7 0-5-1.3-6.4-3.3.1-2.1 4.3-3.3 6.4-3.3s6.3 1.2 6.4 3.3C17 16.7 14.7 18 12 18z"/>
+                </svg>
+            </div>
+            <span class="st-brand-text">Smart<span class="st-brand-dot">.</span>Tailors</span>
+        </a>
+        <ul class="st-nav-links">
+            <li><a href="{% url 'customer_dashboard' %}" class="st-active">Dashboard</a></li>
+            <li><a href="{% url 'customer_profile' %}">My Profile</a></li>
+            <li><a href="{% url 'customer_my_orders' %}">My Orders</a></li>
+            <li><a href="{% url 'customer_measurements' %}">Measurements</a></li>
+            <li><a href="{% url 'customer_services' %}">Services</a></li>
+        </ul>
+        <div class="st-auth">
+            <a href="{% url 'customer_logout' %}" class="st-btn-logout">Logout</a>
+        </div>
+        <button class="st-toggler" id="stToggler" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+{% endblock navbar %}
+
+{% block content %}
+
+<!-- WELCOME BANNER -->
+<div class="dash-welcome reveal">
+    <div class="dash-welcome-text">
+        <div class="dash-eyebrow">Customer Dashboard</div>
+        <div class="dash-name">Welcome back, <em>{{ customer.full_name }}.</em></div>
+        <div class="dash-sub">Manage your orders, measurements and profile all in one place.</div>
+    </div>
+    <div class="dash-welcome-actions">
+        <a href="{% url 'customer_services' %}" class="btn-st">Explore Services
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+    </div>
+</div>
+
+<!-- QUICK LINKS -->
+<div class="quick-grid reveal">
+    <a class="quick-card" href="{% url 'customer_profile' %}">
+        <div class="quick-icon">👤</div>
+        <div class="quick-label">Account</div>
+        <div class="quick-title">My Profile</div>
+        <div class="quick-arr">→</div>
+    </a>
+    <a class="quick-card" href="{% url 'customer_my_orders' %}">
+        <div class="quick-icon">📦</div>
+        <div class="quick-label">Orders</div>
+        <div class="quick-title">My Orders</div>
+        <div class="quick-arr">→</div>
+    </a>
+    <a class="quick-card" href="{% url 'customer_measurements' %}">
+        <div class="quick-icon">📏</div>
+        <div class="quick-label">Body Data</div>
+        <div class="quick-title">Measurements</div>
+        <div class="quick-arr">→</div>
+    </a>
+    <a class="quick-card" href="{% url 'customer_services' %}">
+        <div class="quick-icon">🧵</div>
+        <div class="quick-label">Browse</div>
+        <div class="quick-title">Services</div>
+        <div class="quick-arr">→</div>
+    </a>
+</div>
+
+<!-- RECENT ORDERS -->
+<div class="orders-card reveal">
+    <div class="orders-card-head">
+        <div>
+            <div class="section-eyebrow">History</div>
+            <h2 class="section-title">Recent <em>Orders</em></h2>
+        </div>
+        <a href="{% url 'customer_my_orders' %}" class="btn-st btn-st-sm btn-st-outline">View All</a>
+    </div>
+    <div class="orders-card-body">
+        <table class="st-table">
+            <thead>
+                <tr>
+                    <th>Order No</th>
+                    <th>Date</th>
+                    <th>Delivery</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td><strong style="font-weight:500;">{{ o.order_no }}</strong></td>
+                    <td>{{ o.order_date|date:'d M Y' }}</td>
+                    <td>{{ o.delivery_date|date:'d M Y' }}</td>
+                    <td>
+                        <span class="st-badge
+                            {% if o.order_status == 'Completed' %}st-badge-done
+                            {% elif o.order_status == 'Cancelled' %}st-badge-cancel
+                            {% elif o.order_status == 'Pending' %}st-badge-pending
+                            {% else %}st-badge-progress{% endif %}">
+                            {{ o.order_status }}
+                        </span>
+                    </td>
+                    <td style="font-weight:500;">₹{{ o.total_amount }}</td>
+                    <td>
+                        <a href="{% url 'customer_order_detail' o.id %}" class="btn-st btn-st-sm">View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="empty-row">
+                    <td colspan="6">No orders yet — admin will create orders after confirming your measurements.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

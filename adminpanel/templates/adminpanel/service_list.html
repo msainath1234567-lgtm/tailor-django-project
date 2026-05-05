@@ -1,0 +1,84 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block title %}Services | Smart Tailors{% endblock %}
+{% block nav_services %}active{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Service Management</h1>
+        <p class="page-subtitle">Create and manage tailoring services.</p>
+    </div>
+
+    <a href="{% url 'service_add' %}" class="btn-primary">
+        <i class="fa-solid fa-plus"></i> Add Service
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-head">
+        <div>
+            <div class="card-title">Service List</div>
+            <div class="card-subtitle">All available services</div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Gender</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for s in services %}
+                <tr>
+                    <td>
+                        <strong>{{ s.service_name }}</strong>
+                    </td>
+
+                    <td>
+                        <span class="badge badge-progress">
+                            {{ s.gender_type }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {% if s.is_active %}
+                            <span class="badge badge-done">Active</span>
+                        {% else %}
+                            <span class="badge badge-cancel">Inactive</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="text-end">
+                        <a href="{% url 'service_edit' s.id %}" class="btn-secondary btn-sm">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </a>
+
+                        <form method="post" action="{% url 'service_delete' s.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete btn-sm" onclick="return confirm('Delete this service?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                        No services available
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
